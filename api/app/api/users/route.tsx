@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { User } from '../../lib/sql';
+import { User } from '../../lib/sequelize';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,7 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-// OPTIONS – CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
@@ -15,7 +14,6 @@ export async function OPTIONS() {
   });
 }
 
-// GET – Get all users or one by ID (?id=1)
 export async function GET(request: NextRequest) {
   try {
     const id = request.nextUrl.searchParams.get('id');
@@ -35,7 +33,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST – Create new user
 export async function POST(request: NextRequest) {
   try {
     const { name, lineStatus } = await request.json();
@@ -45,8 +42,10 @@ export async function POST(request: NextRequest) {
     }
 
     const newUser = await User.create({
-        name, lineStatus,
+      name,
+      lineStatus,
     });
+
     return NextResponse.json(newUser, { status: 201, headers: corsHeaders });
   } catch (error) {
     console.error(error);
@@ -54,7 +53,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PATCH – Update user by ID (?id=1)
 export async function PATCH(request: NextRequest) {
   try {
     const id = request.nextUrl.searchParams.get('id');
@@ -79,7 +77,6 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE – Delete user by ID (?id=1)
 export async function DELETE(request: NextRequest) {
   try {
     const id = request.nextUrl.searchParams.get('id');

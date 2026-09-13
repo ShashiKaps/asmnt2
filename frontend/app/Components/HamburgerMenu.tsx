@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./HamburgerMenu.module.css";
@@ -16,21 +16,29 @@ const links = [
 export default function HamburgerMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseLeave = () => {
-    closeTimer.current = setTimeout(() => setOpen(false), 300);
-  };
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
-  const handleMouseEnter = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div className={styles.wrapper} onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter}>
+    <div ref={menuRef} className={styles.wrapper}>
       <button
+        type="button"
         className={styles.button}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((prev) => !prev)}
         aria-label="Toggle menu"
         aria-expanded={open}
       >
@@ -40,20 +48,19 @@ export default function HamburgerMenu() {
       </button>
 
       {open && (
-        <ul className={styles.dropdown} onClick={() => setOpen(false)}>
+        <div className={styles.dropdown} role="menu">
           {links.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`${styles.link} ${
-                  pathname === href ? styles.active : ""
-                }`}
-              >
-                {label}
-              </Link>
-            </li>
+            <Link
+              key={href}
+              href={href}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className={`${styles.link} ${pathname === href ? styles.active : ""}`}
+            >
+              {label}
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

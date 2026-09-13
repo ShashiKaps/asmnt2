@@ -3,6 +3,8 @@
   align-items: stretch;
   background-color: #111;
   border-bottom: 1px solid #333;
+  position: relative;
+  z-index: 10;
 }
 
 .link {
@@ -15,7 +17,7 @@
   text-decoration: none;
   font-size: 0.95rem;
   border-right: 1px solid #333;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .link:hover {
@@ -24,7 +26,7 @@
 }
 
 .active {
-  background-color:#111;
+  background-color: #111;
   color: #fff;
 }
 
@@ -33,4 +35,18 @@
   align-items: center;
   justify-content: center;
   padding: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    justify-content: flex-end;
+  }
+
+  .link {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
 }
