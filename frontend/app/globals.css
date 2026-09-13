@@ -9,6 +9,12 @@
   --border: rgba(148, 163, 184, 0.35);
   --chrome-bg: #040b14;
   --panel-bg: #0b1220;
+  --wordlist-bg: #0b1220;
+  --link-text: #cccccc;
+  --link-hover-bg: #0000ff;
+  --link-hover-text: #ffffff;
+  --link-active-bg: #111111;
+  --link-active-text: #ffffff;
 }
 
 html[data-theme="light"] {
@@ -20,6 +26,12 @@ html[data-theme="light"] {
   --border: rgba(15, 23, 42, 0.15);
   --chrome-bg: #e2e8f0;
   --panel-bg: #ffffff;
+  --wordlist-bg: #ffffff;
+  --link-text: #334155;
+  --link-hover-bg: #2563eb;
+  --link-hover-text: #ffffff;
+  --link-active-bg: #e2e8f0;
+  --link-active-text: #0f172a;
 }
 
 @theme inline {

@@ -58,7 +58,7 @@ export default function SettingsPage() {
           <div className="flex gap-8">
             {/* Light Mode */}
             <label className="flex flex-col items-center gap-2 cursor-pointer">
-              <span className="text-sm text-gray-300">Light Mode</span>
+              <span className="text-sm text-[var(--muted-text)]">Light Mode</span>
               <input
                 type="radio"
                 name="theme"
@@ -71,7 +71,7 @@ export default function SettingsPage() {
 
             {/* Dark Mode */}
             <label className="flex flex-col items-center gap-2 cursor-pointer">
-              <span className="text-sm text-gray-300">Dark Mode</span>
+              <span className="text-sm text-[var(--muted-text)]">Dark Mode</span>
               <input
                 type="radio"
                 name="theme"
@@ -135,7 +135,7 @@ export default function SettingsPage() {
             <textarea
               value={wordList}
               onChange={(e) => setWordList(e.target.value)}
-              className="flex-1 border border-[var(--border)] rounded p-3 bg-[var(--wordlist-bg)] text-gray-300 font-mono text-sm resize-none outline-none focus:border-blue-400 min-h-[580px]"
+              className="flex-1 border border-[var(--border)] rounded p-3 bg-[var(--wordlist-bg)] text-[var(--page-text)] font-mono text-sm resize-none outline-none focus:border-blue-400 min-h-[580px]"
             />
           </div>
         </div>

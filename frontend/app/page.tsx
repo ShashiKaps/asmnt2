@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect, useState } from 'react';
+  
+const APIURL = "http://ec2-44-213-71-150.compute-1.amazonaws.com:4080";
+
 const downloadFile = (path: string, filename: string) => {
   const a = document.createElement("a");
-  a.href = path;
+  a.href = APIURL + path;
   a.download = filename;
   a.click();
 };
