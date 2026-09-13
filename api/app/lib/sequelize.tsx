@@ -66,36 +66,73 @@ export const Word = sequelize.define('Word', {
   underscored: false,
 }) as any;
 
+// An activity configuration - a named, editable set of words (e.g. a Wordle/Word Search word list).
+export const WordList = sequelize.define('WordList', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  phonemeLength: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+}, {
+  timestamps: true,
+  underscored: false,
+}) as any;
+
+WordList.hasMany(Word, { foreignKey: 'wordListId', onDelete: 'CASCADE' });
+Word.belongsTo(WordList, { foreignKey: 'wordListId' });
+
 // Creates tables that don't exist yet (safe to call on every boot; no-ops once tables exist).
 let dbReadyPromise: Promise<void> | null = null;
 
 async function seedWords() {
-  const count = await Word.count();
+  const count = await WordList.count();
   if (count > 0) return;
 
   const dataDir = path.resolve(process.cwd(), 'data');
-  const files: { file: string; length: number }[] = [
-    { file: 'words3.json', length: 3 },
-    { file: 'words4.json', length: 4 },
-    { file: 'words5.json', length: 5 },
+  const files: { file: string; length: number; name: string }[] = [
+    { file: 'words3.json', length: 3, name: 'Default 3-Phoneme Words' },
+    { file: 'words4.json', length: 4, name: 'Default 4-Phoneme Words' },
+    { file: 'words5.json', length: 5, name: 'Default 5-Phoneme Words' },
   ];
 
-  const rows: { word: string; phonemes: string; length: number }[] = [];
-  for (const { file, length } of files) {
+  for (const { file, length, name } of files) {
     const filePath = path.join(dataDir, file);
     if (!fs.existsSync(filePath)) continue;
     const entries = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as { word: string; phonemes: string[] }[];
-    entries.forEach((entry) => {
-      rows.push({ word: entry.word, phonemes: JSON.stringify(entry.phonemes), length });
-    });
-  }
+    if (entries.length === 0) continue;
 
-  if (rows.length > 0) await Word.bulkCreate(rows);
+    const wordList = await WordList.create({
+      name,
+      description: `Seeded default word list for ${length}-phoneme words`,
+      phonemeLength: length,
+    });
+    const rows = entries.map((entry) => ({
+      word: entry.word,
+      phonemes: JSON.stringify(entry.phonemes),
+      length,
+      wordListId: wordList.id,
+    }));
+    await Word.bulkCreate(rows);
+  }
 }
 
 export function ensureDb(): Promise<void> {
   if (!dbReadyPromise) {
-    dbReadyPromise = sequelize.sync().then(() => seedWords());
+    // alter:true so newly added columns/tables (e.g. WordList, wordListId) get applied to the existing sqlite file
+    dbReadyPromise = sequelize.sync({ alter: true }).then(() => seedWords());
   }
   return dbReadyPromise as Promise<void>;
 }

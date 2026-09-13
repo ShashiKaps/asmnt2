@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Word, ensureDb } from '../../lib/sequelize';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
+import { corsHeaders } from '../../lib/cors';
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -23,8 +18,10 @@ export async function GET(request: NextRequest) {
 
     const words = await Word.findAll(where ? { where } : undefined);
     const payload = words.map((w: any) => ({
+      id: w.id,
       word: w.word,
       phonemes: JSON.parse(w.phonemes),
+      wordListId: w.wordListId,
     }));
 
     return NextResponse.json(payload, { headers: corsHeaders });
@@ -33,3 +30,4 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Server error', { status: 500, headers: corsHeaders });
   }
 }
+

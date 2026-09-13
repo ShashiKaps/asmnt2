@@ -1,37 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../Components/ThemeProvider";
-import WORDS_3 from "../Data/words3.json";
-import WORDS_4 from "../Data/words4.json";
-import WORDS_5 from "../Data/words5.json";
-
-const WORD_LISTS = { 3: WORDS_3, 4: WORDS_4, 5: WORDS_5 };
-
-const toWordListText = (len: 3 | 4 | 5) =>
-  WORD_LISTS[len].map((e) => `${e.word}  [${e.phonemes.join(" ")}]`).join("\n");
-
-const toDownloadText = (len: 3 | 4 | 5 | "all") => {
-  if (len === "all") {
-    return [
-      "── 3-Phoneme Words ──",
-      toWordListText(3),
-      "",
-      "── 4-Phoneme Words ──",
-      toWordListText(4),
-      "",
-      "── 5-Phoneme Words ──",
-      toWordListText(5),
-    ].join("\n");
-  }
-  return toWordListText(len);
-};
+import { fetchAllWordLists, WordEntry } from "../lib/api";
+import ActivityManager from "../Components/ActivityManager";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const [wordList, setWordList] = useState(() => toWordListText(3));
+  const wordsByLengthRef = useRef<Record<3 | 4 | 5, WordEntry[]>>({ 3: [], 4: [], 5: [] });
+  const [loadError, setLoadError] = useState("");
+  const [wordList, setWordList] = useState("");
   const [phonemeLength, setPhonemeLength] = useState<3 | 4 | 5>(3);
   const [downloadLen, setDownloadLen] = useState<3 | 4 | 5 | "all">(3);
+
+  const toWordListText = (len: 3 | 4 | 5) =>
+    wordsByLengthRef.current[len].map((e) => `${e.word}  [${e.phonemes.join(" ")}]`).join("\n");
+
+  const toDownloadText = (len: 3 | 4 | 5 | "all") => {
+    if (len === "all") {
+      return [
+        "── 3-Phoneme Words ──",
+        toWordListText(3),
+        "",
+        "── 4-Phoneme Words ──",
+        toWordListText(4),
+        "",
+        "── 5-Phoneme Words ──",
+        toWordListText(5),
+      ].join("\n");
+    }
+    return toWordListText(len);
+  };
+
+  useEffect(() => {
+    fetchAllWordLists()
+      .then((lists) => {
+        wordsByLengthRef.current = lists;
+        setWordList(toWordListText(3));
+      })
+      .catch(() => setLoadError("Could not load word list from the API."));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePhonemeLengthChange = (len: 3 | 4 | 5) => {
     setPhonemeLength(len);
@@ -52,6 +60,7 @@ export default function SettingsPage() {
 
   return (
     <div className="bg-[var(--page-bg)] text-[var(--page-text)] p-8">
+      {loadError && <p className="text-center text-red-400 text-sm mb-4">{loadError}</p>}
       <div className="max-w-6xl mx-auto flex gap-10"> {/* width change - max-w-5xl change the number*/}
         {/* Left column */}
         <div className="flex flex-col gap-8 flex-1">
@@ -139,6 +148,10 @@ export default function SettingsPage() {
             />
           </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto mt-8">
+        <ActivityManager />
       </div>
     </div>
   );

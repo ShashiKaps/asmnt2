@@ -1,18 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import WORDS_3 from "../Data/words3.json";
-import WORDS_4 from "../Data/words4.json";
-import WORDS_5 from "../Data/words5.json";
-
-const WORD_LISTS = { 3: WORDS_3, 4: WORDS_4, 5: WORDS_5 };
-const toWordInput = (len: 3 | 4 | 5 | "random") => {
-  if (len === "random") {
-    const all = [...WORDS_3, ...WORDS_4, ...WORDS_5];
-    return all.sort(() => Math.random() - 0.5).map((e) => e.phonemes.join(" ")).join("\n");
-  }
-  return [...WORD_LISTS[len]].sort(() => Math.random() - 0.5).map((e) => e.phonemes.join(" ")).join("\n");
-};
+import { fetchAllWordLists, WordEntry } from "../lib/api";
 
 interface WordData {
   display: string;
@@ -52,6 +41,17 @@ export default function WordSearchPage() {
   const [phonemeLength, setPhonemeLength] = useState<3 | 4 | 5 | "random">(3);
   const [numWords, setNumWords] = useState(10);
   const [wordInput, setWordInput] = useState(DEFAULT_WORDS);
+  const [loadError, setLoadError] = useState("");
+  const wordsByLengthRef = useRef<Record<3 | 4 | 5, WordEntry[]>>({ 3: [], 4: [], 5: [] });
+
+  const toWordInput = (len: 3 | 4 | 5 | "random") => {
+    const lists = wordsByLengthRef.current;
+    if (len === "random") {
+      const all = [...lists[3], ...lists[4], ...lists[5]];
+      return all.sort(() => Math.random() - 0.5).map((e) => e.phonemes.join(" ")).join("\n");
+    }
+    return [...lists[len]].sort(() => Math.random() - 0.5).map((e) => e.phonemes.join(" ")).join("\n");
+  };
 
   const handlePhonemeLengthChange = (len: 3 | 4 | 5 | "random") => {
     setPhonemeLength(len);
@@ -168,8 +168,17 @@ export default function WordSearchPage() {
     }
   }, [foundWords, wordsData]);
 
-  // Run on first load
-  useEffect(() => { buildPuzzle(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Fetch word lists from the API, then build the first puzzle
+  useEffect(() => {
+    fetchAllWordLists()
+      .then((lists) => {
+        wordsByLengthRef.current = lists;
+        const initialInput = toWordInput(phonemeLength);
+        setWordInput(initialInput);
+        buildPuzzle(initialInput);
+      })
+      .catch(() => setLoadError("Could not load word list from the API."));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function getPath(a: { r: number; c: number }, b: { r: number; c: number }) {
     const dr = b.r - a.r;
@@ -252,6 +261,7 @@ export default function WordSearchPage() {
         </div>
       )}
       <h1 className="text-center text-2xl font-bold text-blue-400 mb-6">Phoneme Word Search - press the mouse and drag over the letters</h1>
+      {loadError && <p className="text-center text-red-400 text-sm mb-4">{loadError}</p>}
 
       <div className="flex gap-8 items-start justify-center mx-auto px-10 max-w-screen-2xl">
         {/* Far-left controls — adjust gap-8 above or w-48 to reposition */}
