@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generatePuzzle, Puzzle } from "./WordleEngine";
 import WordleGame from "./WordleGame";
-import WORDS_3 from "../Data/words3.json";
-import WORDS_4 from "../Data/words4.json";
-import WORDS_5 from "../Data/words5.json";
-
-const ALL_WORDS = [...WORDS_3, ...WORDS_4, ...WORDS_5];
+import { fetchAllWordLists, WordEntry } from "../lib/api";
 
 export default function WordlePage() {
+  const [wordsByLength, setWordsByLength] = useState<Record<3 | 4 | 5, WordEntry[]>>({ 3: [], 4: [], 5: [] });
+  const [loadError, setLoadError] = useState("");
   const [englishWord, setEnglishWord] = useState("");
   const [phonemeWord, setPhonemeWord] = useState("");
   const [showHints, setShowHints] = useState(false);
@@ -17,9 +15,16 @@ export default function WordlePage() {
   const [phonemeLength, setPhonemeLength] = useState<3 | 4 | 5>(3);
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
 
+  useEffect(() => {
+    fetchAllWordLists()
+      .then(setWordsByLength)
+      .catch(() => setLoadError("Could not load word list from the API."));
+  }, []);
+
   const handleEnglishWordChange = (val: string) => {
     setEnglishWord(val);
-    const entry = ALL_WORDS.find((e) => e.word.toLowerCase() === val.toLowerCase());
+    const allWords = [...wordsByLength[3], ...wordsByLength[4], ...wordsByLength[5]];
+    const entry = allWords.find((e) => e.word.toLowerCase() === val.toLowerCase());
     setPhonemeWord(entry ? entry.phonemes.join(" ") : "");
   };
 
@@ -28,14 +33,17 @@ export default function WordlePage() {
   };
 
   const handleGenerate = () => {
+    const list = wordsByLength[phonemeLength];
+    if (list.length === 0) return;
     const maxGuesses = Math.min(8, Math.max(1, parseInt(noOfGuess) || 8)); {/* max number of guess*/} 
-    setPuzzle(generatePuzzle(phonemeLength, maxGuesses, showHints));
+    setPuzzle(generatePuzzle(list, maxGuesses, showHints));
   };
 
   return (
     <>
       {puzzle && <WordleGame puzzle={puzzle} onClose={() => setPuzzle(null)} />}
       <div className="bg-[var(--page-bg)] text-[var(--page-text)] p-8">
+      {loadError && <p className="text-center text-red-400 text-sm mb-4">{loadError}</p>}
       <div className="max-w-4xl mx-auto flex gap-10">
         {/* Left column */}
         <div className="flex flex-col gap-8 flex-1">

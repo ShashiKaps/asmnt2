@@ -21,29 +21,15 @@ export type Puzzle = {
 };
 
 // ---------------------------------------------------------
-// WORD LISTS (import your JSON here)
-// ---------------------------------------------------------
-
-import WORDS_3 from "../Data/words3.json";
-import WORDS_4 from "../Data/words4.json";
-import WORDS_5 from "../Data/words5.json";
-
-const WORD_LISTS: Record<number, WordEntry[]> = {
-  3: WORDS_3,
-  4: WORDS_4,
-  5: WORDS_5,
-};
-
-// ---------------------------------------------------------
 // PUZZLE GENERATOR
+// Word lists are supplied by the caller (fetched from the API).
 // ---------------------------------------------------------
 
 export function generatePuzzle(
-  phonemeLength: 3 | 4 | 5,
+  list: WordEntry[],
   maxGuesses: number,
   showHints: boolean
 ): Puzzle {
-  const list = WORD_LISTS[phonemeLength];
   const solution = list[Math.floor(Math.random() * list.length)];
 
   return {
@@ -59,11 +45,10 @@ export function generatePuzzle(
 
 export function isValidGuess(
   guess: Phoneme[],
-  phonemeLength: number
+  phonemeLength: number,
+  list: WordEntry[]
 ): boolean {
   if (guess.length !== phonemeLength) return false;
-
-  const list = WORD_LISTS[phonemeLength];
   if (!list) return false;
   return list.some((entry) =>
     entry.phonemes.join("") === guess.join("")

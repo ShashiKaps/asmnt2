@@ -24,7 +24,7 @@ services:
       - ./api:/app
       - /app/node_modules
       - sqlite_data:/app/sqlite
-    command: sh -c "npx sequelize-cli db:migrate && npm run dev"
+    command: npm run dev
 
   sqlite:
     image: alpine

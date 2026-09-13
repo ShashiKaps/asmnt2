@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { User } from '../../lib/sequelize';
+import { User, ensureDb } from '../../lib/sequelize';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,6 +16,7 @@ export async function OPTIONS() {
 
 export async function GET(request: NextRequest) {
   try {
+    await ensureDb();
     const id = request.nextUrl.searchParams.get('id');
     if (id) {
       const user = await User.findByPk(parseInt(id));
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureDb();
     const { name, lineStatus } = await request.json();
 
     if (!name || !lineStatus) {
@@ -55,6 +57,7 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    await ensureDb();
     const id = request.nextUrl.searchParams.get('id');
     if (!id) {
       return new NextResponse('Missing id', { status: 400, headers: corsHeaders });
@@ -79,6 +82,7 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    await ensureDb();
     const id = request.nextUrl.searchParams.get('id');
     if (!id) {
       return new NextResponse('Missing id', { status: 400, headers: corsHeaders });
