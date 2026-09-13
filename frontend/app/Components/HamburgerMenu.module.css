@@ -1,0 +1,55 @@
+.wrapper {
+  position: relative;
+}
+
+.button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  min-width: 160px;
+  z-index: 100;
+}
+
+.link {
+  display: block;
+  padding: 10px 16px;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.15s;
+}
+
+.link:hover {
+  background-color: #0000ff;
+  color: #fff;
+}
+
+.active {
+  background-color: #111;
+  color: #fff;
+}
