@@ -92,30 +92,7 @@ export default function SettingsPage() {
             </label>
           </div>
 
-          {/* Download word list */}
-          <div className="flex flex-col gap-3 border border-[var(--border)] rounded p-4">
-            <span className="font-semibold text-sm">Download Phoneme Word List</span>
-            <div className="flex gap-4 flex-wrap">
-              {([3, 4, 5, "all"] as const).map((opt) => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="downloadLen"
-                    checked={downloadLen === opt}
-                    onChange={() => setDownloadLen(opt)}
-                    className="w-5 h-5 accent-teal-400 cursor-pointer"
-                  />
-                  <span className="text-sm">{opt === "all" ? "All" : opt}</span>
-                </label>
-              ))}
-            </div>
-            <button
-              onClick={handleDownload}
-              className="mt-1 py-2 px-4 border border-[var(--border)] rounded text-sm font-semibold hover:bg-[var(--chrome-bg)] transition-colors text-blue-400"
-            >
-              ⬇ Download .txt
-            </button>
-          </div>
+          <ActivityManager />
         </div>
 
         {/* Right column */}
@@ -147,11 +124,32 @@ export default function SettingsPage() {
               className="flex-1 border border-[var(--border)] rounded p-3 bg-[var(--wordlist-bg)] text-[var(--page-text)] font-mono text-sm resize-none outline-none focus:border-blue-400 min-h-[580px]"
             />
           </div>
-        </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto mt-8">
-        <ActivityManager />
+          {/* Download word list */}
+          <div className="flex flex-col gap-3 border border-[var(--border)] rounded p-4">
+            <span className="font-semibold text-sm">Download Phoneme Word List</span>
+            <div className="flex gap-4 flex-wrap">
+              {([3, 4, 5, "all"] as const).map((opt) => (
+                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="downloadLen"
+                    checked={downloadLen === opt}
+                    onChange={() => setDownloadLen(opt)}
+                    className="w-5 h-5 accent-teal-400 cursor-pointer"
+                  />
+                  <span className="text-sm">{opt === "all" ? "All" : opt}</span>
+                </label>
+              ))}
+            </div>
+            <button
+              onClick={handleDownload}
+              className="mt-1 py-2 px-4 border border-[var(--border)] rounded text-sm font-semibold hover:bg-[var(--chrome-bg)] transition-colors text-blue-400"
+            >
+              ⬇ Download .txt
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

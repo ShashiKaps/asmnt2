@@ -19,7 +19,7 @@ export default function WordlePage() {
     fetchAllWordLists()
       .then(setWordsByLength)
       .catch(() => setLoadError("Could not load word list from the API."));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEnglishWordChange = (val: string) => {
     setEnglishWord(val);

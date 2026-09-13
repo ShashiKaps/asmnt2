@@ -19,7 +19,8 @@ export async function fetchWords(length?: 3 | 4 | 5): Promise<WordEntry[]> {
   const url = length ? `${API_URL}/api/words?length=${length}` : `${API_URL}/api/words`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch words (${res.status})`);
-  return res.json();
+  const words: WordEntry[] = await res.json();
+  return words.sort((a, b) => a.word.localeCompare(b.word));
 }
 
 export async function fetchAllWordLists(): Promise<Record<3 | 4 | 5, WordEntry[]>> {
@@ -36,7 +37,11 @@ async function unwrap(res: Response) {
 }
 
 export function fetchWordLists(): Promise<WordListEntry[]> {
-  return fetch(`${API_URL}/api/wordlists`).then(unwrap);
+  return fetch(`${API_URL}/api/wordlists`)
+    .then(unwrap)
+    .then((lists: WordListEntry[]) =>
+      lists.map((l) => ({ ...l, words: [...l.words].sort((a, b) => a.word.localeCompare(b.word)) }))
+    );
 }
 
 export function createWordList(payload: { name: string; description?: string; phonemeLength: 3 | 4 | 5 }): Promise<WordListEntry> {
