@@ -126,7 +126,7 @@ export default function ActivityManager() {
           onClick={handleDeleteWord}
           className="border border-[var(--border)] rounded px-6 py-2 text-sm font-semibold text-red-400 hover:bg-[var(--chrome-bg)] transition-colors"
         >
-          + Delete Word
+          - Delete Word
         </button>
       </div>
     </div>
