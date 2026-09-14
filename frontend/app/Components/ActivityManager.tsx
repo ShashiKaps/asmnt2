@@ -114,19 +114,19 @@ export default function ActivityManager() {
           onClick={handleAddWord}
           className="border border-[var(--border)] rounded px-6 py-2 text-sm font-semibold text-blue-400 hover:bg-[var(--chrome-bg)] transition-colors"
         >
-          + Add Word
+          Add Word
         </button>
         <button
           onClick={handleUpdateWord}
           className="border border-[var(--border)] rounded px-6 py-2 text-sm font-semibold text-blue-400 hover:bg-[var(--chrome-bg)] transition-colors"
         >
-          + Update Word
+          Update Word
         </button>
         <button
           onClick={handleDeleteWord}
           className="border border-[var(--border)] rounded px-6 py-2 text-sm font-semibold text-red-400 hover:bg-[var(--chrome-bg)] transition-colors"
         >
-          - Delete Word
+          Delete Word
         </button>
       </div>
     </div>
