@@ -34,9 +34,13 @@ export default function AboutPage() {
         <div className="w-full md:w-[46%] flex flex-col gap-2">
           <span className="text-gray-400 text-sm">Video:</span>
           <div className="border border-[var(--border)] rounded overflow-hidden aspect-video bg-black">
-            <video className="w-full h-full object-cover" controls>
-              <source src="/Assessment1.mp4" type="video/mp4" />
-            </video>
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/1kkUNsTgED0"
+              title="Assessment video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
       </div>
