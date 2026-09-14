@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
   
-const APIURL = "http://ec2-98-92-29-193.compute-1.amazonaws.com:4080";
+const APIURL = "http://ec2-18-232-124-196.compute-1.amazonaws.com:4080";
 
 const downloadFile = (path: string, filename: string) => {
   const a = document.createElement("a");
