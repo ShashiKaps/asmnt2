@@ -36,7 +36,7 @@ export default function AboutPage() {
           <div className="border border-[var(--border)] rounded overflow-hidden aspect-video bg-black">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/1kkUNsTgED0"
+              src="https://www.youtube.com/embed/V0CzY8CkjVw"
               title="Assessment video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
